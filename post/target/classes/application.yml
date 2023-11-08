@@ -23,3 +23,40 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+management:
+  health:
+    circuitbreakers:
+      enable: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      commentBreaker:
+        # Register with health indicator.
+        registerHealthIndicator: true
+        # Event consumer buffer size.
+        eventConsumerBufferSize: 10
+        # Sets the Threshold value for the failure rate percentage at which circuit breaker should open.
+        #If failure rate exceeds this threshold, the circuit breaker goes into an open state.
+        failureRateThreshold: 50
+        # Minimum number of calls to open the circuit.
+        minimumNumberOfCalls: 5
+        # Enable automatic transition from OPEN to HALF_OPEN state.
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        # Wait duration in OPEN state.
+        waitDurationInOpenState: 6s
+        # Permitted number of calls in HALF_OPEN state.
+        permittedNumberOfCallsInHalfOpenState: 3
+        # Sliding window size.
+        slidingWindowSize: 10
+        # Sliding window type. This is based on count of calls.
+        slidingWindowType: COUNT_BASED
+
